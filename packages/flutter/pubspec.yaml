@@ -1,6 +1,8 @@
 name: flutter
 description: A framework for writing Flutter applications
 homepage: https://flutter.dev
+publish_to: https://git.polynom.me/api/packages/Moxxy/pub
+version: 3.0.1
 
 environment:
   sdk: ">=2.12.0-0 <3.0.0"
