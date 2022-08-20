@@ -527,6 +527,7 @@ class EditableText extends StatefulWidget {
     this.scrollBehavior,
     this.scribbleEnabled = true,
     this.enableIMEPersonalizedLearning = true,
+    this.shouldSummonKeyboard,
   }) : assert(controller != null),
        assert(focusNode != null),
        assert(obscuringCharacter != null && obscuringCharacter.length == 1),
@@ -603,6 +604,8 @@ class EditableText extends StatefulWidget {
   /// Controls the text being edited.
   final TextEditingController controller;
 
+  final bool Function()? shouldSummonKeyboard;
+  
   /// Controls whether this widget has keyboard focus.
   final FocusNode focusNode;
 
@@ -2392,6 +2395,10 @@ class EditableTextState extends State<EditableText> with AutomaticKeepAliveClien
   /// focus, the control will then attach to the keyboard and request that the
   /// keyboard become visible.
   void requestKeyboard() {
+    if (widget.shouldSummonKeyboard != null) {
+      if (!widget.shouldSummonKeyboard!()) return;
+    }
+
     if (_hasFocus) {
       _openInputConnection();
     } else {

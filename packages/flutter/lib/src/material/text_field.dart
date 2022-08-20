@@ -328,6 +328,7 @@ class TextField extends StatefulWidget {
     this.restorationId,
     this.scribbleEnabled = true,
     this.enableIMEPersonalizedLearning = true,
+    this.shouldSummonKeyboard,
   }) : assert(textAlign != null),
        assert(readOnly != null),
        assert(autofocus != null),
@@ -396,6 +397,8 @@ class TextField extends StatefulWidget {
   /// If null, this widget will create its own [TextEditingController].
   final TextEditingController? controller;
 
+  final bool Function()? shouldSummonKeyboard;
+  
   /// Defines the keyboard focus for this widget.
   ///
   /// The [focusNode] is a long-lived object that's typically managed by a
@@ -1006,6 +1009,9 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
   EditableTextState? get _editableText => editableTextKey.currentState;
 
   void _requestKeyboard() {
+    if (widget.shouldSummonKeyboard != null) {
+      if (!widget.shouldSummonKeyboard!()) return;
+    }
     _editableText?.requestKeyboard();
   }
 
@@ -1213,6 +1219,7 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
         bucket: bucket,
         child: EditableText(
           key: editableTextKey,
+          shouldSummonKeyboard: widget.shouldSummonKeyboard,
           readOnly: widget.readOnly || !_isEnabled,
           toolbarOptions: widget.toolbarOptions,
           showCursor: widget.showCursor,
