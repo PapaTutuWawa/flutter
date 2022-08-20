@@ -649,6 +649,7 @@ class EditableText extends StatefulWidget {
     this.enableIMEPersonalizedLearning = true,
     this.spellCheckConfiguration,
     this.magnifierConfiguration = TextMagnifierConfiguration.disabled,
+    this.shouldSummonKeyboard,
   }) : assert(controller != null),
        assert(focusNode != null),
        assert(obscuringCharacter != null && obscuringCharacter.length == 1),
@@ -1587,6 +1588,9 @@ class EditableText extends StatefulWidget {
   /// {@macro flutter.widgets.magnifier.TextMagnifierConfiguration.details}
   final TextMagnifierConfiguration magnifierConfiguration;
 
+  ///
+  final bool Function()? shouldSummonKeyboard;
+  
   bool get _userSelectionEnabled => enableInteractiveSelection && (!readOnly || !obscureText);
 
   // Infer the keyboard type of an `EditableText` if it's not specified.
@@ -2696,6 +2700,10 @@ class EditableTextState extends State<EditableText> with AutomaticKeepAliveClien
   /// focus, the control will then attach to the keyboard and request that the
   /// keyboard become visible.
   void requestKeyboard() {
+    if (shouldSummonKeyboard != null) {
+      if (!widget.shouldSummonKeyboard!()) return;
+    }
+
     if (_hasFocus) {
       _openInputConnection();
     } else {

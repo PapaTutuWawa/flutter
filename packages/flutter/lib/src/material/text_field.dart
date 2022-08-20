@@ -336,6 +336,7 @@ class TextField extends StatefulWidget {
     this.enableIMEPersonalizedLearning = true,
     this.spellCheckConfiguration,
     this.magnifierConfiguration,
+    this.shouldSummonKeyboard,
   }) : assert(textAlign != null),
        assert(readOnly != null),
        assert(autofocus != null),
@@ -808,6 +809,10 @@ class TextField extends StatefulWidget {
   /// configuration, then [materialMisspelledTextStyle] is used by default.
   final SpellCheckConfiguration? spellCheckConfiguration;
 
+  /// Called whenever we have to decide as to whether to summon the soft keyboard or
+  /// not. Return true to summon the soft keyboard. Return false to not summon it.
+  final bool Function() shouldSummonKeyboard;
+  
   /// The [TextStyle] used to indicate misspelled words in the Material style.
   ///
   /// See also:
@@ -1065,7 +1070,13 @@ class _TextFieldState extends State<TextField> with RestorationMixin implements 
   EditableTextState? get _editableText => editableTextKey.currentState;
 
   void _requestKeyboard() {
-    _editableText?.requestKeyboard();
+    if (widget.shouldSummonKeyboard != null) {
+      if (widget.shouldSummonKeyboard!()) {
+        _editableText?.requestKeyboard();
+      }
+    } else {
+      _editableText?.requestKeyboard();
+    }
   }
 
   bool _shouldShowSelectionHandles(SelectionChangedCause? cause) {
